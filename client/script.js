@@ -10,6 +10,7 @@
 */
 
 // CODE HERE
+const sayHelloButton = document.getElementById('say-hello-button');
 
 
 // PROBLEM 2
@@ -20,6 +21,12 @@
 */
 
 // CODE HERE
+function probTwoSetClass(event) {
+    // sayHelloButton.classList.add('helloStyle');
+    event.target.classList.add('helloStyle');
+}
+
+sayHelloButton.addEventListener('mouseover', probTwoSetClass);
 
 
 // PROBLEM 3
@@ -32,6 +39,7 @@
 */
 
 // CODE HERE
+sayHelloButton.addEventListener('mouseout', event => { sayHelloButton.classList.remove('helloStyle')});
 
 
 // PROBLEM 4
@@ -53,6 +61,7 @@ const sayHello = () => {
 // DO NOT EDIT FUNCTION
 
 // CODE HERE
+sayHelloButton.addEventListener('click', sayHello);
 
 
 // PROBLEM 5 
@@ -65,9 +74,24 @@ const sayHello = () => {
     
     Handle the promise that's returned with a .then, which you should pass a callback function to. Inside the callback function, console.log the response's data (in the intermediate instructions we'll come back to this function and add HTML).
 */ 
+const mainUrl = 'http://localhost:3000';
 
 const ohMy = () => {
     // YOUR CODE HERE
+    axios.get(`${mainUrl}/animals`)
+        .then(res => {
+            console.log(res);
+            // On each iteration of the loop, create a new p element. Set its textContent equal the string at the current index (i) and then append the new p element onto the document's body. 
+            for (let i = 0; i < res.data.length; i++) {
+                const elem = document.createElement('p');
+                elem.innerHTML = res.data[i];
+                document.querySelector('body').appendChild(elem);
+
+            }
+        })
+        .catch(error => console.log(error));
+    
+
 }
 
 document.getElementById('animals-button').addEventListener('click', ohMy)
@@ -88,7 +112,16 @@ document.getElementById('animals-button').addEventListener('click', ohMy)
 
 const repeatMyParam = () => {
     //YOUR CODE HERE
+    axios.get(`${mainUrl}/repeat/myTestPhrase`)
+        .then(res => {
+            console.log(res.data);
+            document.getElementById('repeat-text').textContent = res.data;
+            document.getElementById('repeat-text').style.display = 'block';
+        })
+        .catch(error => console.log(error));
 }
+
+document.getElementById('repeat-button').addEventListener('click', repeatMyParam);
 
 // PROBLEM 7
 /*
@@ -111,6 +144,15 @@ const repeatMyParam = () => {
 */
 
 // CODE HERE
+function problemEightQuery() {
+    axios.get(`${mainUrl}/query-test?name=Peter`)
+        .then(res => {
+            console.log(res.data);
+        })
+        .catch(error => console.log(error));
+}
+
+document.getElementById('query-button').addEventListener('click', problemEightQuery);
 
 
 
@@ -132,8 +174,10 @@ const repeatMyParam = () => {
     In the function that you wrote for Problem 8, change the URL to test a couple different scenarios. 
 
     1: Send no queries on the URL -- what happened? 
+    The response from the server said that my query was empty
 
     2: Send more than 1 query on the URL -- what happened? 
+    the second query was treated as part of the 'value' of the first query
 */
 
 // Edit code in Problem 8
@@ -164,3 +208,25 @@ const repeatMyParam = () => {
 */
 
 // CODE HERE 
+function createFood(event) {
+    event.preventDefault();
+    document.querySelector('ul').innerHTML = '';
+
+    const foodInput = document.querySelector('input');
+    let body = {
+        newFood: foodInput.value
+    };
+
+    axios.post(`${mainUrl}/food`, body)
+        .then(res => {
+            console.log(res.data);
+            for (let i = 0; i < res.data.length; i++) {
+                document.querySelector('ul').innerHTML += `<li>${res.data[i]}</li>`
+            }
+        })
+        .catch(error => console.log(error));
+    
+    document.querySelector('input').value = '';
+}
+
+document.querySelector('form').addEventListener('submit', createFood);
